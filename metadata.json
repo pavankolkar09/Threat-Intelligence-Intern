@@ -1,0 +1,5 @@
+{
+  "name": "Sentinel Intelligence - AI Threat Analysis System",
+  "description": "A comprehensive Cyber Threat Intelligence (CTI) platform for analyzing IOCs, tracking threat actors, and monitoring global security trends using AI.",
+  "requestFramePermissions": []
+}

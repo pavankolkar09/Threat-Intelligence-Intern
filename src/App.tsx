@@ -626,8 +626,13 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-brand-card border border-brand-border rounded-lg text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-slate-400 font-mono">System Status: Operational</span>
+              <span className={cn(
+                "w-2 h-2 rounded-full animate-pulse",
+                process.env.GEMINI_API_KEY ? "bg-green-500" : "bg-yellow-500"
+              )} />
+              <span className="text-slate-400 font-mono">
+                System Status: {process.env.GEMINI_API_KEY ? "Operational" : "Mock Mode (No API Key)"}
+              </span>
             </div>
             <button className="p-2 bg-brand-card border border-brand-border rounded-lg text-slate-400 hover:text-white transition-colors">
               <FileText className="w-4 h-4" />

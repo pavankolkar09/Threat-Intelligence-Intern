@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const apiKey = process.env.GEMINI_API_KEY;
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 export interface IOCAnalysisResult {
   status: 'Malicious' | 'Suspicious' | 'Clean' | 'Unknown';
@@ -10,6 +11,23 @@ export interface IOCAnalysisResult {
 }
 
 export const analyzeIOC = async (type: string, value: string): Promise<IOCAnalysisResult> => {
+  if (!ai) {
+    console.warn("GEMINI_API_KEY missing. Using mock analysis.");
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+    
+    // Simple mock logic based on common patterns
+    const isMalicious = value.includes('evil') || value.includes('malware') || value.startsWith('192.168.1.100');
+    
+    return {
+      status: isMalicious ? 'Malicious' : 'Clean',
+      explanation: `[MOCK MODE] This is a simulated analysis for ${type}: ${value}. In a real environment with an API key, this would be analyzed against global threat intelligence feeds.`,
+      threatLevel: isMalicious ? 'High' : 'Low',
+      recommendations: isMalicious 
+        ? ["Block this indicator at the firewall", "Isolate affected systems", "Initiate incident response"]
+        : ["Continue monitoring", "No immediate action required"]
+    };
+  }
+
   const prompt = `Act as a senior Cyber Threat Intelligence (CTI) analyst. 
   Analyze the following Indicator of Compromise (IOC):
   Type: ${type}
@@ -48,6 +66,25 @@ export const analyzeIOC = async (type: string, value: string): Promise<IOCAnalys
 };
 
 export const generateThreatReport = async (data: any): Promise<string> => {
+  if (!ai) {
+    return `
+# [MOCK] Cyber Threat Intelligence Report
+**Target IOC:** ${data.ioc} (${data.type})
+**Status:** ${data.analysis.status}
+**Threat Level:** ${data.analysis.threatLevel}
+
+## Executive Summary
+This is a mock report generated because no Gemini API key was provided. In a live system, this section would contain a high-level summary of the threat actor's motivations and the potential impact on the organization.
+
+## Technical Details
+- **Indicator:** ${data.ioc}
+- **Analysis:** ${data.analysis.explanation}
+
+## Recommendations
+${data.analysis.recommendations.map((r: string) => `- ${r}`).join('\n')}
+    `;
+  }
+
   const prompt = `Generate a professional Cyber Threat Intelligence report for an intern's portfolio based on the following data:
   ${JSON.stringify(data)}
   

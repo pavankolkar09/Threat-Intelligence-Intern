@@ -16,12 +16,11 @@ Sentinel Intelligence is a comprehensive Cyber Threat Intelligence (CTI) platfor
 - **Database**: SQLite (via `better-sqlite3`) for persistent storage of actors, trends, and analysis history.
 - **AI Engine**: Google Gemini 3.1 Flash for deep contextual analysis of threats and report generation.
 
-## Internship Context: Real-World Tasks
-This project helps a Threat Intelligence Intern perform the following real-world tasks:
-- **Triage**: Quickly identifying if an IOC found in logs is a known threat.
-- **Actor Attribution**: Mapping attack techniques to known threat groups.
-- **Reporting**: Generating structured intelligence reports for stakeholders.
-- **Trend Analysis**: Staying ahead of the curve by monitoring emerging attack vectors like Ransomware 2.0.
+## Features for Interns
+- **Automated Triage**: Quickly identify if an IOC found in logs is a known threat.
+- **Actor Attribution**: Map attack techniques to known threat groups.
+- **Report Generation**: Create professional Markdown reports for incident response or intelligence sharing.
+- **Trend Analysis**: Monitor emerging attack vectors like Ransomware 2.0 and Supply Chain attacks.
 
 ## Workflow Diagram
 ```mermaid
@@ -35,13 +34,15 @@ graph TD
     G --> H[Export PDF/Markdown Report]
 ```
 
-## Setup Instructions
-1. **Environment Variables**: Ensure `GEMINI_API_KEY` is set in your environment.
-2. **Installation**: Run `npm install` to install dependencies.
-3. **Development**: Run `npm run dev` to start the Express server and Vite frontend.
-4. **Database**: The system automatically initializes `threat_intel.db` on first run.
+## Setup & Local Execution
+1. **Environment Variables**: To enable AI features, set `GEMINI_API_KEY` in your `.env` file.
+2. **Mock Mode**: If no API key is provided, the system automatically switches to **Mock Mode**. This allows you to demonstrate the entire workflow with simulated data and pre-formatted reports without needing an active internet connection or API credits.
+3. **Installation**: Run `npm install` to install dependencies.
+4. **Development**: Run `npm run dev` to start the Express server and Vite frontend.
+5. **Database**: The system automatically initializes `threat_intel.db` on first run and seeds it with sample data.
 
 ## Sample Dataset
 The system comes pre-seeded with:
 - **Actors**: Lazarus Group, Fancy Bear (APT28), Wizard Spider.
 - **Trends**: Ransomware 2.0, Supply Chain Attacks, AI-Enhanced Phishing.
+- **History**: Pre-analyzed IOCs to populate the dashboard immediately.

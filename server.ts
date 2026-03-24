@@ -49,6 +49,12 @@ if (actorCount.count === 0) {
   insertTrend.run("Ransomware 2.0", "Double extortion tactics involving data exfiltration before encryption.", "Critical", 85);
   insertTrend.run("Supply Chain Attacks", "Targeting software vendors to compromise downstream customers.", "High", 60);
   insertTrend.run("AI-Enhanced Phishing", "Using LLMs to create highly convincing and personalized phishing emails.", "Medium", 45);
+
+  const insertIOC = db.prepare("INSERT INTO ioc_history (type, value, status, analysis) VALUES (?, ?, ?, ?)");
+  insertIOC.run("IP", "192.168.1.105", "Malicious", "Associated with known C2 infrastructure used by Lazarus Group.");
+  insertIOC.run("Domain", "secure-update-microsoft.com", "Suspicious", "Domain registered recently with high entropy, mimicking official Microsoft update service.");
+  insertIOC.run("Hash", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "Clean", "Known safe system file hash (empty file).");
+  insertIOC.run("IP", "45.33.22.11", "Malicious", "Flagged for active scanning and brute-force attempts against SSH ports.");
 }
 
 async function startServer() {

@@ -81,6 +81,8 @@ export default function App() {
   const [iocType, setIocType] = useState<'IP' | 'Domain' | 'Hash'>('IP');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<IOCAnalysisResult | null>(null);
+  const [reportContent, setReportContent] = useState<string | null>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   // Phishing State
   const [phishingInput, setPhishingInput] = useState('');
@@ -90,6 +92,24 @@ export default function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleGenerateReport = async () => {
+    if (!analysisResult) return;
+    setIsGeneratingReport(true);
+    try {
+      const { generateThreatReport } = await import('./services/geminiService');
+      const report = await generateThreatReport({
+        ioc: iocInput,
+        type: iocType,
+        analysis: analysisResult
+      });
+      setReportContent(report);
+    } catch (error) {
+      console.error("Report generation failed:", error);
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -320,11 +340,35 @@ export default function App() {
                   <p className="text-xs text-slate-500">Threat Level: {analysisResult.threatLevel}</p>
                 </div>
               </div>
-              <button className="text-xs flex items-center gap-1 text-brand-accent hover:underline">
-                <Download className="w-3 h-3" />
-                Export Report
+              <button 
+                onClick={handleGenerateReport}
+                disabled={isGeneratingReport}
+                className="text-xs flex items-center gap-1 text-brand-accent hover:underline disabled:opacity-50"
+              >
+                {isGeneratingReport ? <Activity className="w-3 h-3 animate-spin" /> : <FileText className="w-3 h-3" />}
+                {isGeneratingReport ? "Generating..." : "Generate Full Report"}
               </button>
             </div>
+
+            {reportContent && (
+              <div className="glass-panel p-6 bg-brand-accent/5 border-brand-accent/30 animate-in slide-in-from-top-2 duration-300">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-sm font-bold flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-brand-accent" />
+                    AI-Generated Threat Intelligence Report
+                  </h4>
+                  <button 
+                    onClick={() => setReportContent(null)}
+                    className="text-xs text-slate-500 hover:text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className="prose prose-invert prose-sm max-w-none text-slate-300 font-sans">
+                  <Markdown>{reportContent}</Markdown>
+                </div>
+              </div>
+            )}
 
             <div className="bg-black/20 p-6 rounded-xl border border-brand-border">
               <h4 className="text-xs font-bold uppercase text-slate-500 mb-3 flex items-center gap-2">
